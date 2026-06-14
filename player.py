@@ -1,6 +1,5 @@
-from deck import Deck, Card
-from deck import get_color
-from constants import SUITS
+from deck import Deck
+from constants import SUITS, Card
 
 class Player():
     def __init__(self, name: str):
@@ -16,8 +15,8 @@ class Player():
     def play(self, stacks: Deck) ->bool:
         slot: int = get_valid_slot(self, "play")
         card_to_play: Card = self.hand.pop(slot-1)
-        suit_index: int = SUITS.index(card_to_play[1])
-        if stacks[suit_index] == (card_to_play[0]-1, card_to_play[1]):
+        suit_index: int = SUITS.index(card_to_play.suit)
+        if stacks[suit_index] == (card_to_play.rank-1, card_to_play.suit):
             stacks[suit_index] = card_to_play
             return True
         else:
@@ -26,15 +25,15 @@ class Player():
     def discard(self, trash: list[Deck]):
         slot: int = get_valid_slot(self, "discard")
         discarded_card = self.hand.pop(slot-1)
-        suit_index: int = SUITS.index(discarded_card[1])
+        suit_index: int = SUITS.index(discarded_card.suit)
         trash[suit_index].append(discarded_card)
-        trash[suit_index].sort(key=get_color)
+        trash[suit_index].sort(key=Card.get_rank)
             
 def get_valid_slot(player: Player, move: str) -> int:
     valid_slot_input = False
     while valid_slot_input == False:
         try:
-            slot: int = int(input(f"What slot do you want to {move}? Insert a number between 1 and {len(player.hand)} "))
+            slot: int = int(input(f"What slot do you want to {move}? Insert a number between 1 and {len(player.hand)}: "))
             if slot < 1 or slot > len(player.hand):
                 print(f"There is no slot {slot}")
                 continue
@@ -42,3 +41,6 @@ def get_valid_slot(player: Player, move: str) -> int:
         except Exception:
             print("Not a valid input")
     return slot
+
+def clue_someone(players: list[Player]):
+    pass

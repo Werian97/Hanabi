@@ -1,8 +1,7 @@
 import random
-from constants import ORDERED_DECK
+from constants import ORDERED_DECK, Card
 from collections.abc import Callable
 
-Card = tuple[int, str]
 Deck = list[Card]
 
 def get_new_deck() -> Deck:
@@ -16,6 +15,3 @@ def get_hand_capacity(players_number: int) -> int:
     elif players_number in [4, 5]:
         return 4
     raise Exception("Not valid input. You can choose between 2 and 5 players")
-
-def get_color(card: Card):
-    return card[0]
