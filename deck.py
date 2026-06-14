@@ -1,6 +1,7 @@
 import random
-from constants import ORDERED_DECK, Card
+from constants import ORDERED_DECK
 from collections.abc import Callable
+from card import Card
 
 Deck = list[Card]
 

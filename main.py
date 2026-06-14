@@ -1,9 +1,10 @@
 from deck import get_new_deck, get_hand_capacity
 from deck import Deck
-from player import Player, clue_someone
+from player import Player
 from constants import PLAYERS, INITIAL_CLUES
 from constants import Card
 from moves import determine_move
+from clues import clue_someone
 
 def main():
     condition = True
@@ -22,11 +23,11 @@ def main():
     clues: int = INITIAL_CLUES
     strikes: int = 0
     stacks: Deck =[
-        Card(0, "red"),
-        Card(0, "yellow"),
-        Card(0, "green"),
-        Card(0, "blue"),
-        Card(0, "purple"),
+        Card("0", "red"),
+        Card("0", "yellow"),
+        Card("0", "green"),
+        Card("0", "blue"),
+        Card("0", "purple"),
     ]
     trash: list[Deck] = [[], [], [], [], []]
     running = True
@@ -41,6 +42,7 @@ def main():
     while running:
         for player in players:
             valid_input = False
+            others: list[Player] = []
             print("\n\n")
             print(f"{player.name} it's your turn. This is your hand:")
             print(player.hand)
@@ -48,8 +50,8 @@ def main():
             print("These are other players' hands:")
             for npc in players:
                 if npc is not player:
-                    print(f"{npc.name}'s hand is \n{npc.hand}")
-                    print("\n")
+                    others.append(npc)
+                    print(f"{npc.name}'s hand is \n{npc.hand}\n")
             while valid_input == False:
                 try:
                     move: str = determine_move(clues, input("What do you want to do? (Play: P, Clue: C, Discard: D): "))
@@ -69,13 +71,25 @@ def main():
                 if len(deck) > 0:
                     player.draw_a_card(deck)
             else: #move == clue
-                clue_someone(players)
+                clue_someone(others)
                 clues -= 1
-            print(f"These is the stacks:\n{stacks}")
+            print(f"These are the stacks:\n{stacks}")
             print("\n")
             print(f"You have {clues} clues")
             print("\n")
             print(f"And this is the trash:\n{trash}")
+            for npc in players:
+                print(npc.name)
+                for card in npc.hand:
+                    print("pos rank")
+                    print(card.positive_rank_clues)
+                    print("neg rank")
+                    print(card.negative_rank_clues)
+                    print("pos suit")
+                    print(card.positive_suit_clues)
+                    print("neg suit")
+                    print(card.negative_suit_clues)
+            input("Press enter to continue...")
 
     
 

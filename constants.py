@@ -1,21 +1,7 @@
-SUITS = ["red", "yellow", "green", "blue", "purple"]
-RANKS = [1, 2, 3, 4, 5]
+from card import Card
 
-class Card():
-    def __init__(self, rank: int, suit: str):
-        self.rank = rank
-        self.suit = suit
-    
-    def get_rank(self):
-        return self.rank
-    
-    def __str__(self):
-        return f"({self.rank}, {self.suit})"
-    
-    def __repr__(self):
-        return str(self)
-
-
+SUITS: list[str] = ["red", "yellow", "green", "blue", "purple"]
+RANKS: list[str] = ["1", "2", "3", "4", "5"]
 ORDERED_DECK: list[Card] = []
 for suit in SUITS:
     for rank in RANKS:
