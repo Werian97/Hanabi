@@ -21,8 +21,8 @@ def clue_someone(others: list[Player]):
                 "Type 'back' to change target)")
                 clue = check_the_clue(input("Type in your clue: "), possible_clues)
                 valid_clue = True
-            except:
-                continue
+            except Exception as e:
+                print(e)
         if clue != "back":
             clue_decided = True
     target_player.recieve_the_clue(clue)
@@ -39,28 +39,36 @@ def get_valid_clue_target(names: list[str]) -> str:
             print("Not a valid target. Remember that this game is case sensitive")
     return target
 
-def get_possible_clues(player_target: Player) ->dict[str, set]:
+def get_possible_clues(player_target: Player) ->dict[str, set[str]]:
     possible_clues: dict[str, set] = {
         "ranks": player_target.get_hand_ranks(),
         "suits": player_target.get_hand_suits()
     }
     return possible_clues
 
-def check_the_clue(clue: str, possible_clues: dict[str, set]) -> str:
+def check_the_clue(clue: str, possible_clues: dict[str, set[str]]) -> str:
     clue = clue.strip()
+    clue = clue.lower()
     if clue in RANKS:
-        return clue    
-    elif clue in ["Red", "red", "R", "r"]:
-        return "red"
-    elif clue in ["Yellow", "yellow", "Y", "y"]:
-        return "yellow"
-    elif clue in ["Green", "green", "G", "g"]:
-        return "green"
-    elif clue in ["Blue", "blue", "B", "b"]:
-        return "blue"
-    elif clue in ["Purple", "purple", "P", "p"]:
-        return "purple"
-    elif clue in ["Back", "back"]:
+        if clue in possible_clues["ranks"]:
+            return clue    
+    elif clue in ["red", "r"] and "red" in possible_clues["suits"]:
+        if "red" in possible_clues["suits"]:
+            return "red"
+    elif clue in ["yellow", "y"] and "yellow" in possible_clues["suits"]:
+        if "yellow" in possible_clues["suits"]:
+            return "yellow"
+    elif clue in ["green", "g"] and "green" in possible_clues["suits"]:
+        if "green" in possible_clues["suits"]:
+            return "green"
+    elif clue in ["blue", "b"] and "blue" in possible_clues["suits"]:
+        if "blue" in possible_clues["suits"]:
+            return "blue"
+    elif clue in ["purple", "p"] and "purple" in possible_clues["suits"]:
+        if "purple" in possible_clues["suits"]:
+            return "purple"
+    elif clue == "back":
         return "back"
     else:
         raise Exception("Invalid input")
+    raise Exception("Empty clues are not allowed")

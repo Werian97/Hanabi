@@ -2,6 +2,7 @@ import random
 from constants import ORDERED_DECK
 from collections.abc import Callable
 from card import Card
+from functools import reduce
 
 Deck = list[Card]
 
@@ -16,3 +17,6 @@ def get_hand_capacity(players_number: int) -> int:
     elif players_number in [4, 5]:
         return 4
     raise Exception("Not valid input. You can choose between 2 and 5 players")
+
+def calculate_points(stacks: Deck) -> int:
+    return reduce(lambda sum_so_far, card: sum_so_far + int(card.rank), stacks, 0)

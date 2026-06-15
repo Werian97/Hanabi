@@ -1,10 +1,11 @@
-from deck import get_new_deck, get_hand_capacity
+from deck import get_new_deck, get_hand_capacity, calculate_points
 from deck import Deck
 from player import Player
 from constants import PLAYERS, INITIAL_CLUES
 from constants import Card
 from moves import determine_move
 from clues import clue_someone
+from functools import reduce
 
 def main():
     condition = True
@@ -22,6 +23,7 @@ def main():
     deck: Deck = get_new_deck()
     clues: int = INITIAL_CLUES
     strikes: int = 0
+    clock: int = 0
     stacks: Deck =[
         Card("0", "red"),
         Card("0", "yellow"),
@@ -58,38 +60,45 @@ def main():
                     valid_input = True
                 except Exception as e:
                     print(e)
-            if move == "play":
-                success: bool = player.play(stacks)
-                if not success:
-                    print("STRIKE")
-                    strikes += 1
-                if len(deck) > 0:
-                    player.draw_a_card(deck)
-            elif move == "discard":
-                player.discard(trash)
-                clues += 1
-                if len(deck) > 0:
-                    player.draw_a_card(deck)
-            else: #move == clue
+            if move == "clue":
                 clue_someone(others)
                 clues -= 1
-            print(f"These are the stacks:\n{stacks}")
-            print("\n")
-            print(f"You have {clues} clues")
-            print("\n")
-            print(f"And this is the trash:\n{trash}")
-            for npc in players:
-                print(npc.name)
-                for card in npc.hand:
-                    print("pos rank")
-                    print(card.positive_rank_clues)
-                    print("neg rank")
-                    print(card.negative_rank_clues)
-                    print("pos suit")
-                    print(card.positive_suit_clues)
-                    print("neg suit")
-                    print(card.negative_suit_clues)
-            input("Press enter to continue...")
+            else:
+                if move == "play":
+                    (success, just_played_five) = player.play(stacks, trash)
+                    if not success:
+                        print("STRIKE")
+                        strikes += 1
+                    if just_played_five:
+                        clues = min(8, clues + 1)
+                elif move == "discard":
+                    player.discard(trash)
+                    clues += 1
+                
+                #after the play or discard
+                if len(deck) > 0:
+                        player.draw_a_card(deck)
+            if len(deck) == 0:
+                clock += 1
+
+            loss_condition = strikes >= 3
+            win_condition = reduce(lambda check, card: check and card.rank == 5, stacks, True)
+            end_game = clock >= players_number
+            
+            if win_condition or end_game:
+                running = False
+                points = calculate_points(stacks)
+                print(f"CONGRATULATIONS! You totalized {points} points")
+            elif loss_condition:
+                running = False
+                print("Oh no! That was strike 3. The game is over. You totalized 0 points")
+            else:
+                print(f"These are the stacks:\n{stacks}")
+                print("\n")
+                print(f"You have {clues} clues")
+                print("\n")
+                print(f"And this is the trash:\n{trash}")
+                input("Press enter to continue...")
 
     
 

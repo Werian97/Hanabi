@@ -15,22 +15,21 @@ class Player():
         else:
             self.hand.append(deck.pop(0))
     
-    def play(self, stacks: Deck) ->bool:
+    def play(self, stacks: Deck, trash: list[Deck]) ->tuple[bool, bool]:
         slot: int = get_valid_slot(self, "play")
         card_to_play: Card = self.hand.pop(slot-1)
         suit_index: int = SUITS.index(card_to_play.suit)
         if stacks[suit_index] == precedent(card_to_play):
             stacks[suit_index] = card_to_play
-            return True
+            return True, card_to_play.rank == "5"
         else:
-            return False
+            add_to_trash(trash, card_to_play)
+            return False, False
     
     def discard(self, trash: list[Deck]) -> None:
         slot: int = get_valid_slot(self, "discard")
         discarded_card = self.hand.pop(slot-1)
-        suit_index: int = SUITS.index(discarded_card.suit)
-        trash[suit_index].append(discarded_card)
-        trash[suit_index].sort(key=Card.get_rank)
+        add_to_trash(trash, discarded_card)
     
     def get_hand_ranks(self) -> set[str]:
         ranks: set[str] = set()
@@ -67,3 +66,8 @@ def get_valid_slot(player: Player, move: str) -> int:
         except Exception:
             print("Not a valid input")
     return slot
+
+def add_to_trash(trash: list[Deck], discarded_card: Card) -> None:
+    suit_index: int = SUITS.index(discarded_card.suit)
+    trash[suit_index].append(discarded_card)
+    trash[suit_index].sort(key=Card.get_rank)
