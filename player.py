@@ -14,12 +14,14 @@ class Player():
     
     def get_hand_ranks(self) -> set[str]:
         ranks: set[str] = set()
-        list(map(lambda x: ranks.add(x.rank), self.hand)) #just being fancy
+        for card in self.hand:
+            ranks.add(card.rank)
         return ranks
 
     def get_hand_suits(self) -> set[str]:
         suits: set[str] = set()
-        list(map(lambda x: suits.add(x.suit), self.hand)) #just being fancy
+        for card in self.hand:
+            suits.add(card.suit)
         return suits
     
     def recieve_the_clue(self, clue: str) -> None:
@@ -34,16 +36,10 @@ class Player():
                     card.positive_suit_clues.add(clue)
                 else:
                     card.negative_suit_clues.add(clue)
-            
-def get_valid_slot(player: Player, move_type: str) -> int:
-    valid_slot_input = False
-    while not valid_slot_input:
-        try:
-            slot: int = int(input(f"What slot do you want to {move_type}? Insert a number between 1 and {len(player.hand)}: "))
-            if slot < 1 or slot > len(player.hand):
-                print(f"There is no slot {slot}")
-                continue
-            valid_slot_input = True
-        except Exception:
-            print("Not a valid input")
-    return slot
+
+    def get_possible_clues(self) ->dict[str, set[str]]:
+        possible_clues: dict[str, set] = {
+            "ranks": self.get_hand_ranks(),
+            "suits": self.get_hand_suits()
+        }
+        return possible_clues

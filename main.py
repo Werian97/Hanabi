@@ -1,16 +1,18 @@
 from game import Game
 from move import Move
-
-from move import get_the_move
+import terminal_interface
 
 def main():
-    game = Game()
+    players_number = terminal_interface.get_number_of_players()
+    game = Game(players_number)
     while game.running:
-        move: Move = get_the_move(game)
-        move.execute()
+        terminal_interface.print_player_hand(game.current.player, game.current.others)
+        move: Move = terminal_interface.ask_move(game)
+        move.execute(game)
             
         game.update_exit_conditions()
         game.next_turn()
-        print(game)
+        terminal_interface.print_game_state(game)
+    terminal_interface.print_end_message(game)
 
 main()
