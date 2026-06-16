@@ -7,20 +7,16 @@ from card import precedent
 from constants import SUITS
 
 class Move():
-    def __init__(self, target_player: Player, slot: int, rank_or_suit: str):
-        self.target_player = target_player
-        self.slot = slot
-        self.rank_or_suit = rank_or_suit
     
     def execute(self, game: Game):
         pass #MUST OVERRIDE
 
 class Play(Move):
-    def __init__(self, target_player: Player, slot: int, rank_or_suit: str):
-        super().__init__(target_player, slot, rank_or_suit)
+    def __init__(self, slot: int):
+        self.slot = slot
     
     def execute(self, game: Game) -> None:
-        card_to_play: Card = self.target_player.hand.pop(self.slot-1)
+        card_to_play: Card = game.current.player.hand.pop(self.slot-1)
         suit_index: int = SUITS.index(card_to_play.suit)
         if game.stacks[suit_index] == precedent(card_to_play):
             game.stacks[suit_index] = card_to_play
@@ -33,8 +29,9 @@ class Play(Move):
             game.current.player.draw_a_card(game.deck)
 
 class Clue(Move):
-    def __init__(self, target_player: Player, slot: int, rank_or_suit: str):
-        super().__init__(target_player, slot, rank_or_suit)
+    def __init__(self, target_player: Player, rank_or_suit: str):
+        self.target_player = target_player
+        self.rank_or_suit = rank_or_suit
 
     def execute(self, game: Game):
         self.target_player.recieve_the_clue(self.rank_or_suit)
@@ -42,11 +39,11 @@ class Clue(Move):
 
 
 class Discard(Move):
-    def __init__(self, target_player: Player, slot: int, rank_or_suit: str):
-        super().__init__(target_player, slot, rank_or_suit)
+    def __init__(self, slot: int):
+        self.slot = slot
 
     def execute(self, game: Game):
-        discarded_card = self.target_player.hand.pop(self.slot-1)
+        discarded_card = game.current.player.hand.pop(self.slot-1)
         add_to_trash(game.trash, discarded_card)
         game.clues += 1
         if len(game.deck) > 0:

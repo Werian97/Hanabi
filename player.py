@@ -10,7 +10,7 @@ class Player():
         if deck == []:
             raise Exception("there are no cards in the deck")
         else:
-            self.hand.append(deck.pop(0))
+            self.hand.insert(0, deck.pop(0))
     
     def get_hand_ranks(self) -> set[str]:
         ranks: set[str] = set()

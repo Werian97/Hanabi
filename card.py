@@ -7,7 +7,7 @@ class Card():
         self.positive_suit_clues: set[str] = set()
         self.negative_suit_clues: set[str] = set()
     
-    def get_rank(self):
+    def get_rank(self): #QUESTA SERVE PER ORDINARE IL TRASH
         return self.rank
     
     def __str__(self):
@@ -20,4 +20,4 @@ class Card():
          return self.rank == other.rank and self.suit == other.suit
 
 def precedent(card: Card) -> Card:
-        return Card(str(int(card.rank)-1), card.suit)
+    return Card(str(int(card.rank)-1), card.suit)
