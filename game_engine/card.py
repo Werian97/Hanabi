@@ -19,5 +19,8 @@ class Card():
     def __eq__(self, other):
          return self.rank == other.rank and self.suit == other.suit
 
-def precedent(card: Card) -> Card:
-    return Card(str(int(card.rank)-1), card.suit)
+    def precedent(self) -> "Card":
+        return Card(str(int(self.rank)-1), self.suit)
+    
+    def short_str(self) -> str:
+        return f"{self.suit[0]}{self.rank}"

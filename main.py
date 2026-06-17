@@ -11,6 +11,7 @@ def main():
     if running:
         game = Game(players_number)
         history = History(players_number, game.deck)
+        game.deal_cards()
         while game.running:
             terminal_interface.print_player_hand(game.current.player, game.current.others)
             move: Move = terminal_interface.ask_move(game, history)

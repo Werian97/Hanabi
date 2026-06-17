@@ -3,7 +3,6 @@ from game_engine.card import Card
 from game_engine.player import Player
 
 from game_engine.deck import add_to_trash
-from game_engine.card import precedent
 from game_engine.constants import SUITS
 
 class Move():
@@ -20,7 +19,7 @@ class Play(Move):
     def execute(self, game: Game) -> None:
         card_to_play: Card = game.current.player.hand.pop(self.slot-1)
         suit_index: int = SUITS.index(card_to_play.suit)
-        if game.stacks[suit_index] == precedent(card_to_play):
+        if game.stacks[suit_index] == card_to_play.precedent():
             game.stacks[suit_index] = card_to_play
             if card_to_play.rank == "5":
                 game.clues = min(8, game.clues + 1)

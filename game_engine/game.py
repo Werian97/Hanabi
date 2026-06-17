@@ -23,13 +23,8 @@ class Game():
             Card("0", "purple"),
         ]
         self.trash: list[Deck] = [[], [], [], [], []] #initialized trash
-
         self.players: list[Player] = [] #empty list of players. populated by the next for-cycle
-        for i in range(0, self.players_number):
-            self.players.append(Player(PLAYERS[i]))
-            for _ in range(0, self.hand_capacity):
-                self.players[i].draw_a_card(self.deck)
-        self.current: PlayerAndOthers = PlayerAndOthers(self.players[0], self.players[1:]) #it store in each turn who's playing and who's watching
+        self.current: PlayerAndOthers
         self.exit_conditions: ExitConditions = ExitConditions() #[stack_completed, strike_exceeded, clock's_over]
         self.final_score: int = 0
 
@@ -62,6 +57,14 @@ class Game():
         else:
             self.current.player = self.players[j+1]
         self.update_others_than(self.current.player)
+    
+    def deal_cards(self) -> None:
+        for i in range(0, self.players_number):
+            self.players.append(Player(PLAYERS[i]))
+            for _ in range(0, self.hand_capacity):
+                self.players[i].draw_a_card(self.deck)
+        self.current: PlayerAndOthers = PlayerAndOthers(self.players[0], self.players[1:]) #it store in each turn who's playing and who's watching
+        
 
 def get_hand_capacity(players_number: int) -> int:
     if players_number in [2, 3]:

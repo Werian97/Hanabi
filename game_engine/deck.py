@@ -1,5 +1,5 @@
 import random
-from game_engine.constants import ORDERED_DECK, SUITS
+from game_engine.constants import RANKS, SUITS, SEED_DICTIONARY, CLUE_ALIASES
 from game_engine.card import Card
 
 from functools import reduce
@@ -20,7 +20,27 @@ def add_to_trash(trash: list[Deck], discarded_card: Card) -> None:
     trash[suit_index].sort(key=Card.get_rank)
 
 def get_deck_seed(deck: Deck) -> str:
-    return "There's still work to do!"
+    return "".join(
+        SEED_DICTIONARY[card.short_str()]
+        for card in deck
+    )
 
 def convert_seed_to_deck(seed: str) -> Deck:
-    pass
+    deck: Deck = []
+    card_data: str = "prova"
+    for char in seed:
+        for key, value in SEED_DICTIONARY.items():
+            if value == char:
+                card_data = key
+        deck.append(Card(card_data[1], CLUE_ALIASES.get(card_data[0], "ERROR")))
+    return deck
+
+
+ORDERED_DECK: list[Card] = []
+for suit in SUITS:
+    for rank in RANKS:
+        ORDERED_DECK.append(Card(rank, suit))
+        if rank != 5:
+            ORDERED_DECK.append(Card(rank, suit))
+            if rank == 1:
+                ORDERED_DECK.append(Card(rank, suit))
