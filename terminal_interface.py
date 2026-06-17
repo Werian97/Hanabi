@@ -4,7 +4,7 @@ from game_engine.move import Move, Clue, Play, Discard
 from game_engine.card import Card
 
 from game_engine.game import calculate_points
-from game_engine.constants import MAX_CLUES, RANKS, CLUE_ALIASES
+from game_engine.constants import MAX_CLUES, CLUE_ALIASES
 
 def get_number_of_players() -> int:
     valid_player_count = False #exit condition for the how-many-players-while
