@@ -1,4 +1,4 @@
-from card import Card
+from game_engine.card import Card
 
 SUITS: list[str] = ["red", "yellow", "green", "blue", "purple"]
 RANKS: list[str] = ["1", "2", "3", "4", "5"]

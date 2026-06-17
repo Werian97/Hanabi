@@ -1,10 +1,10 @@
-from game import Game
-from card import Card
-from player import Player
+from game_engine.game import Game
+from game_engine.card import Card
+from game_engine.player import Player
 
-from deck import add_to_trash
-from card import precedent
-from constants import SUITS
+from game_engine.deck import add_to_trash
+from game_engine.card import precedent
+from game_engine.constants import SUITS
 
 class Move():
     

@@ -1,7 +1,7 @@
 import random
-from constants import ORDERED_DECK, SUITS
-from collections.abc import Callable
-from card import Card
+from game_engine.constants import ORDERED_DECK, SUITS
+from game_engine.card import Card
+
 from functools import reduce
 
 Deck = list[Card]

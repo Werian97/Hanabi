@@ -1,0 +1,3 @@
+FULL_SCREEN: bool = True
+WINDOW_WIDTH: int = 800
+WINDOW_HEIGHT: int = 600
