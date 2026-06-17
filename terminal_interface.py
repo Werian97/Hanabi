@@ -2,6 +2,7 @@ from game_engine.player import Player
 from game_engine.game import Game
 from game_engine.move import Move, Clue, Play, Discard
 from game_engine.card import Card
+from game_engine.memory import History
 
 from game_engine.game import calculate_points
 from game_engine.constants import MAX_CLUES, CLUE_ALIASES
@@ -70,10 +71,12 @@ def get_a_clue(target_player: Player, possible_clues: dict[str, set[str]]) -> st
         return clue
     raise EmptyClue("Empty clues are not allowed")
 
-def ask_move(game: Game) -> Move:
+def ask_move(game: Game, history: History) -> Move:
     while True:
         try:
-            return determine_move(game)
+            move: Move = determine_move(game)
+            history.add_move(move)
+            return move
         except Exception as e:
             print(e)
 

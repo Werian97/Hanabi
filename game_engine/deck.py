@@ -18,3 +18,9 @@ def add_to_trash(trash: list[Deck], discarded_card: Card) -> None:
     suit_index: int = SUITS.index(discarded_card.suit)
     trash[suit_index].append(discarded_card)
     trash[suit_index].sort(key=Card.get_rank)
+
+def get_deck_seed(deck: Deck) -> str:
+    return "There's still work to do!"
+
+def convert_seed_to_deck(seed: str) -> Deck:
+    pass

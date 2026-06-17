@@ -7,8 +7,10 @@ from game_engine.card import precedent
 from game_engine.constants import SUITS
 
 class Move():
-    
     def execute(self, game: Game):
+        pass #MUST OVERRIDE
+
+    def __str__(self):
         pass #MUST OVERRIDE
 
 class Play(Move):
@@ -27,6 +29,9 @@ class Play(Move):
             game.strikes += 1
         if len(game.deck) > 0:
             game.current.player.draw_a_card(game.deck)
+    
+    def __str__(self):
+        return f"plays slot {self.slot}"
 
 class Clue(Move):
     def __init__(self, target_player: Player, rank_or_suit: str):
@@ -36,6 +41,9 @@ class Clue(Move):
     def execute(self, game: Game):
         self.target_player.recieve_the_clue(self.rank_or_suit)
         game.clues -= 1
+    
+    def __str__(self):
+        return f"clues {self.rank_or_suit} to {self.target_player.name}"
 
 
 class Discard(Move):
@@ -48,3 +56,6 @@ class Discard(Move):
         game.clues += 1
         if len(game.deck) > 0:
             game.current.player.draw_a_card(game.deck)
+    
+    def __str__(self):
+        return f"discards slot {self.slot}"
