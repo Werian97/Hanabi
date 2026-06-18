@@ -26,7 +26,7 @@ class History():
         strings.append("-------------------------------------------------------------------------")
         strings.append(f"Initial deck seed = {self.deck_seed}")
         strings.append("-------------------------------------------------------------------------")
-        strings.append(f"The moves where:\n{moves}")
+        strings.append(f"The moves were:\n{moves}")
         strings.append("-------------------o==oo===========ooo===========oo==o-------------------\n\n")
         return "\n".join(strings)
 
