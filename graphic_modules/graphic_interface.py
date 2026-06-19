@@ -4,7 +4,11 @@ from pygame import Surface
 from graphic_modules.graphic_settings import FULL_SCREEN, WINDOW_HEIGHT, WINDOW_WIDTH
 from graphic_modules.buttons import Button, create_num_players_buttons
 
-def get_number_of_players(full_screen: bool) -> tuple[int, bool]:
+from game_engine_modules.game import Game
+from memory_modules.history import History
+
+def get_number_of_players(**kwargs) -> tuple[int, bool]:
+    full_screen: bool = kwargs.get("full_screen", FULL_SCREEN)
     pygame.init()
 
     number_gotten = False
@@ -38,7 +42,7 @@ def get_number_of_players(full_screen: bool) -> tuple[int, bool]:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.display.quit()
-                    return get_number_of_players(not full_screen)
+                    return get_number_of_players(full_screen = not full_screen)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 for button in buttons:
                     if button.rect.collidepoint(pygame.mouse.get_pos()):
@@ -54,3 +58,6 @@ def get_number_of_players(full_screen: bool) -> tuple[int, bool]:
 
     pygame.display.quit()
     return players_number, running
+
+def ask_move(game: Game, history: History):
+    pass

@@ -1,13 +1,12 @@
-from game_engine.game import Game
-from game_engine.move import Move
-from graphic_interface.graphic_settings import FULL_SCREEN
-from game_engine.memory import History
+from game_engine_modules.game import Game
+from game_engine_modules.move import Move
+from memory_modules.history import History
 
 import terminal_interface
-import graphic_interface.graphic_interface as graphic_interface
+import graphic_modules.graphic_interface as graphic_interface
 
 def main():
-    players_number, running = graphic_interface.get_number_of_players(FULL_SCREEN)
+    players_number, running = graphic_interface.get_number_of_players()
     if running:
         game = Game(players_number)
         history = History(players_number, game.deck)
@@ -21,6 +20,6 @@ def main():
             game.next_turn()
             terminal_interface.print_game_state(game)
         terminal_interface.print_end_message(game)
-    history.record_history()
+        history.record_history()
 
 main()
