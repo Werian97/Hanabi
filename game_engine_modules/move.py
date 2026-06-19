@@ -1,9 +1,9 @@
-from game_engine.game import Game
-from game_engine.card import Card
-from game_engine.player import Player
+from game_engine_modules.game import Game
+from game_engine_modules.card import Card
+from game_engine_modules.player import Player
 
-from game_engine.deck import add_to_trash
-from game_engine.constants import SUITS
+from game_engine_modules.deck import add_to_trash
+from game_engine_modules.constants import SUITS
 
 class Move():
     def execute(self, game: Game):

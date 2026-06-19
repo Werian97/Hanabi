@@ -1,8 +1,8 @@
-from game_engine.deck import Deck
-from game_engine.move import Move
+from game_engine_modules.deck import Deck
+from game_engine_modules.move import Move
 
-from game_engine.deck import get_deck_seed, convert_seed_to_deck
-from game_engine.constants import PLAYERS
+from game_engine_modules.deck import get_deck_seed, convert_seed_to_deck
+from game_engine_modules.constants import PLAYERS
 
 
 class History():

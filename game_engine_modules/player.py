@@ -1,5 +1,5 @@
-from game_engine.deck import Deck
-from game_engine.constants import RANKS
+from game_engine_modules.deck import Deck
+from game_engine_modules.constants import RANKS
 
 class Player():
     def __init__(self, name: str):

@@ -1,6 +1,6 @@
 import random
-from game_engine.constants import RANKS, SUITS, SEED_DICTIONARY, CLUE_ALIASES
-from game_engine.card import Card
+from game_engine_modules.constants import RANKS, SUITS, SEED_DICTIONARY, CLUE_ALIASES
+from game_engine_modules.card import Card
 
 from functools import reduce
 

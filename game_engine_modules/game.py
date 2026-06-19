@@ -1,9 +1,9 @@
-from game_engine.player import Player
-from game_engine.card import Card
-from game_engine.deck import Deck
+from game_engine_modules.player import Player
+from game_engine_modules.card import Card
+from game_engine_modules.deck import Deck
 
-from game_engine.deck import get_new_deck, calculate_points
-from game_engine.constants import INITIAL_CLUES, PLAYERS
+from game_engine_modules.deck import get_new_deck, calculate_points
+from game_engine_modules.constants import INITIAL_CLUES, PLAYERS
 
 class Game():
     def __init__(self, players_number):

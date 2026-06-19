@@ -1,8 +1,8 @@
 import pygame
 
 from pygame import Surface
-from graphic_interface.graphic_settings import FULL_SCREEN, WINDOW_HEIGHT, WINDOW_WIDTH
-from graphic_interface.buttons import Button, create_num_players_buttons
+from graphic_modules.graphic_settings import FULL_SCREEN, WINDOW_HEIGHT, WINDOW_WIDTH
+from graphic_modules.buttons import Button, create_num_players_buttons
 
 def get_number_of_players(full_screen: bool) -> tuple[int, bool]:
     pygame.init()
