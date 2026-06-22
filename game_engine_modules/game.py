@@ -7,9 +7,9 @@ from game_engine_modules.constants import INITIAL_CLUES, PLAYERS
 
 class Game():
     def __init__(self, players_number):
-        self.players_number = players_number
-        self.hand_capacity = get_hand_capacity(players_number) #how many cards in each hand
-        self.running = True #the game is running
+        self.running: bool = True
+        self.players_number: int = players_number
+        self.hand_capacity: int = get_hand_capacity(players_number) #how many cards in each hand
         self.turn: int = 1 #number of turns
         self.deck: Deck = get_new_deck() #shuffled deck
         self.clues: int = INITIAL_CLUES #initial clue tokens (8)

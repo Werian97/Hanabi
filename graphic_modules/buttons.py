@@ -1,5 +1,7 @@
 import pygame
 
+from graphic_modules.screen_geometry import center_rectangles
+
 from collections.abc import Callable
 
 class Button(pygame.sprite.Sprite):
@@ -30,11 +32,6 @@ class Button(pygame.sprite.Sprite):
         rendered_text: pygame.Surface = self.font_object.render(self.text_inside, True, self.text_color)
         delta_x, delta_y = center_rectangles(*rendered_text.get_size(), *self.rect.size)
         screen.blit(rendered_text, (self.rect.left + delta_x, self.rect.top + delta_y))
-
-def center_rectangles(text_width_box: int, text_height_box: int, button_width: int, button_height: int) -> tuple[int, int]:
-    #Input: 2 pairs of rectangle coordinate
-    #Output: How much you need to translate (x and y) the first rectangle to center it with respect to the second
-    return round((button_width - text_width_box)/2), round((button_height - text_height_box)/2)
 
 def create_num_players_buttons(window_width: int, window_height: int):
     button_width, button_height, button_height_separation = 80, 50, 80
