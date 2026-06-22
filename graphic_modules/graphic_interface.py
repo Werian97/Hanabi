@@ -4,6 +4,7 @@ from pygame import Surface
 from graphic_modules.graphic_settings import FULL_SCREEN, WINDOW_HEIGHT, WINDOW_WIDTH
 from graphic_modules.buttons import NumPlayerButton, create_num_players_buttons
 from graphic_modules.geometry import Geometry
+from graphic_modules.print_functions import print_game, update_card_positions
 
 from game_engine_modules.game import Game
 from game_engine_modules.move import Move
@@ -73,12 +74,13 @@ def start_window(players_number, game: Game, **kwargs) -> Geometry:
     for card in game.all_cards:
         card.button.image = pygame.transform.scale(pygame.image.load(f'assets/cards/{card.suit}{card.rank}.png'), geometry.card_size)
     for card in game.stacks:
-        if card.rank == 0:
+        if card.rank == "0":
             card.button.image = pygame.transform.scale(pygame.image.load(f'assets/cards/{card.suit}{card.rank}.png'), geometry.card_size)
     pygame.display.set_caption("Hanabi E.-Version")
     return geometry
 
 def ask_move(geometry: Geometry, game: Game, history: History, **kwargs) -> Move:
+    card_positions_updated = False
     full_screen = kwargs.get("full_screen", FULL_SCREEN)
     clock = pygame.time.Clock()
     while game.running:
@@ -90,15 +92,12 @@ def ask_move(geometry: Geometry, game: Game, history: History, **kwargs) -> Move
                     pygame.display.quit()
                     full_screen = not full_screen
                     geometry = start_window(len(game.players), game, full_screen = full_screen)
+                    card_positions_updated = False
+        if not card_positions_updated:
+            update_card_positions(game, geometry)
         geometry.screen.fill("darkgreen")
-        for i in range(len(game.players)):
-            player = game.players[i]
-            for j in range(len(player.hand)):
-                card = player.hand[j]
-                card.button.position = (geometry.hands_coos[i][0] + j*(geometry.card_size[0]+geometry.card_spacing), geometry.hands_coos[i][1])
-                card.button.draw_card(geometry.screen)
+        print_game(game, geometry.screen)
         pygame.display.flip()
 
         clock.tick(60)
     return Move()
-
