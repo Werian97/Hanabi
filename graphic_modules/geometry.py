@@ -1,7 +1,5 @@
 from graphic_modules.graphic_settings import CARD_WIDTH, CARD_HEIGHT, CARD_SPACING, NAME_LABEL_WIDTH, NAME_LABEL_HEIGHT
-from graphic_modules.graphic_settings import PlayersNumber, TwoPlayers, ThreePlayers, FourPlayers, FivePlayers
-
-from game_engine_modules.game import get_hand_capacity
+from graphic_modules.graphic_settings import TwoPlayers, ThreePlayers, FourPlayers, FivePlayers
 
 import pygame
 from pygame import Surface
@@ -9,7 +7,7 @@ from pygame import Surface
 coordinate = tuple[int, int]
 taglia = tuple[int, int]
 
-class ScreenGeometry():
+class Geometry():
     def __init__(self, players_number: int, screen: Surface):
         self.screen: Surface = screen
         self.players_number: int = players_number
@@ -36,25 +34,7 @@ class ScreenGeometry():
         self.deck_coo: coordinate = rescaled(PlayersNumber.DECK_COOS.value, self.window_size)
         self.stacks_coo: coordinate = rescaled(PlayersNumber.STACKS_COO.value, self.window_size)
         self.meta_data_size: taglia = rescaled(PlayersNumber.META_DATA_SIZE.value, self.window_size) #turn, efficiency, pace, clues
-        self.meta_data_coo: coordinate = rescaled(PlayersNumber.META_DATA_COO.value, self.window_size)
-    
-    def test_draw(self) -> None:
-        for h in range(len(self.hands_coos)):
-            for i in range(get_hand_capacity(self.players_number)):
-                left = self.hands_coos[h][0] + i * (self.card_size[0] + self.card_spacing)
-                top = self.hands_coos[h][1]
-                pygame.draw.rect(self.screen, "white", pygame.Rect((left, top), self.card_size)) #better to use polygon
-            pygame.draw.rect(self.screen, "yellow", pygame.Rect(self.name_label_coos[h], self.name_label_size))
-        for j in range(0,5):
-            pygame.draw.rect(self.screen, "red", pygame.Rect(self.trash_coos[j], self.trash_card_size))
-        pygame.draw.rect(self.screen, "blue", pygame.Rect(self.deck_coo, self.card_size))
-        for k in range(0,5):
-            left = self.stacks_coo[0] + k * (round(self.card_spacing/10) + self.card_size[0])
-            top = self.stacks_coo[1]
-            pygame.draw.rect(self.screen, "purple", pygame.Rect(left, top, *self.card_size))
-        pygame.draw.rect(self.screen, "black", pygame.Rect(self.meta_data_coo, self.meta_data_size))
-        pygame.display.flip()
-        
+        self.meta_data_coo: coordinate = rescaled(PlayersNumber.META_DATA_COO.value, self.window_size)        
 
 def center_rectangles(width_1: int, height_1: int, width_2: int, height_2: int) -> coordinate:
     #Input: 2 pairs of rectangle coordinate

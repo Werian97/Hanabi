@@ -1,3 +1,5 @@
+from graphic_modules.buttons import CardButton
+
 class Card():
     def __init__(self, rank: str, suit: str):
         self.rank = rank
@@ -6,6 +8,7 @@ class Card():
         self.negative_rank_clues: set[str] = set()
         self.positive_suit_clues: set[str] = set()
         self.negative_suit_clues: set[str] = set()
+        self.button = CardButton()
     
     def get_rank(self): #QUESTA SERVE PER ORDINARE IL TRASH
         return self.rank

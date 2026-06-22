@@ -1,11 +1,11 @@
 import pygame
 from enum import Enum
 
-FULL_SCREEN: bool = False
+FULL_SCREEN: bool = True
 WINDOW_WIDTH: int = 1000
 WINDOW_HEIGHT: int = 600
 
-#constants in case the game is at full screen at 100% of zooming (default is 125%).
+#constants in case the game is at full screen.
 #need to rescale them otherwise
 pygame.init()
 desktop_size = pygame.display.get_desktop_sizes()[0]
@@ -14,12 +14,6 @@ CARD_HEIGHT: int = round(1.4 * CARD_WIDTH)
 CARD_SPACING: int = round(desktop_size[0]/100)
 NAME_LABEL_WIDTH: int = round(desktop_size[0]/10)
 NAME_LABEL_HEIGHT: int = round(0.25 * NAME_LABEL_WIDTH)
-
-class PlayersNumber(Enum):
-    TWO = 2
-    THREE = 3
-    FOUR = 4
-    FIVE = 5
 
 #2 players
 class TwoPlayers(Enum):

@@ -1,3 +1,5 @@
+from enum import Enum
+
 SUITS: list[str] = ["red", "yellow", "green", "blue", "purple"]
 RANKS: list[str] = ["1", "2", "3", "4", "5"]
 CLUE_ALIASES: dict[str, str] = {
@@ -48,3 +50,9 @@ SEED_DICTIONARY = {
     "p4": "x",
     "p5": "y"
 }
+
+class HandCapacity(Enum):
+    TWO = 5
+    THREE = 5
+    FOUR = 4
+    FIVE = 4

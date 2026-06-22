@@ -1,6 +1,7 @@
 from game_engine_modules.player import Player
 from game_engine_modules.card import Card
 from game_engine_modules.deck import Deck
+from game_engine_modules.constants import HandCapacity
 
 from game_engine_modules.deck import get_new_deck, calculate_points
 from game_engine_modules.constants import INITIAL_CLUES, PLAYERS
@@ -9,9 +10,18 @@ class Game():
     def __init__(self, players_number):
         self.running: bool = True
         self.players_number: int = players_number
-        self.hand_capacity: int = get_hand_capacity(players_number) #how many cards in each hand
+        match players_number:
+            case 2:
+                self.hand_capacity: int = HandCapacity.TWO.value
+            case 3:
+                self.hand_capacity: int = HandCapacity.THREE.value
+            case 4:
+                self.hand_capacity: int = HandCapacity.FOUR.value
+            case 5:
+                self.hand_capacity: int = HandCapacity.FIVE.value
         self.turn: int = 1 #number of turns
         self.deck: Deck = get_new_deck() #shuffled deck
+        self.all_cards: Deck = self.deck.copy()
         self.clues: int = INITIAL_CLUES #initial clue tokens (8)
         self.strikes: int = 0 #strikes
         self.clock: int = 0 #it ticks the last round of the game
@@ -64,14 +74,6 @@ class Game():
             for _ in range(0, self.hand_capacity):
                 self.players[i].draw_a_card(self.deck)
         self.current: PlayerAndOthers = PlayerAndOthers(self.players[0], self.players[1:]) #it store in each turn who's playing and who's watching
-        
-
-def get_hand_capacity(players_number: int) -> int:
-    if players_number in [2, 3]:
-        return 5
-    else: #players_number in [4, 5]
-        return 4
-
 
 class PlayerAndOthers():
     def __init__(self, player: Player, others: list[Player]):

@@ -40,7 +40,7 @@ ORDERED_DECK: list[Card] = []
 for suit in SUITS:
     for rank in RANKS:
         ORDERED_DECK.append(Card(rank, suit))
-        if rank != 5:
+        if int(rank) != 5:
             ORDERED_DECK.append(Card(rank, suit))
-            if rank == 1:
+            if int(rank) == 1:
                 ORDERED_DECK.append(Card(rank, suit))

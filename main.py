@@ -5,7 +5,6 @@ from memory_modules.history import History
 
 import terminal_interface
 import graphic_modules.graphic_interface as graphic_interface
-import pygame
 
 def main():
     players_number, exit_game = graphic_interface.get_number_of_players()
@@ -13,17 +12,12 @@ def main():
         return
     
     game = Game(players_number)
+    geometry = graphic_interface.start_window(players_number, game)
     history = History(players_number, game.deck)
     game.deal_cards()
-    screen_geometry = graphic_interface.start_game(players_number)
 
-    clock = pygame.time.Clock
     while game.running:
-        screen_geometry.screen.fill("darkgreen")
-        screen_geometry.test_draw()
-        pygame.time.wait(6000)
-        pygame.quit()
-        exit()
+        graphic_interface.ask_move(geometry, game, history)
         terminal_interface.print_player_hand(game.current.player, game.current.others)
         move: Move = terminal_interface.ask_move(game, history)
         move.execute(game)

@@ -1,10 +1,11 @@
 import pygame
 
-from graphic_modules.screen_geometry import center_rectangles
+from graphic_modules.graphic_settings import CARD_WIDTH, CARD_HEIGHT
+from graphic_modules.geometry import center_rectangles
 
 from collections.abc import Callable
 
-class Button(pygame.sprite.Sprite):
+class NumPlayerButton(pygame.sprite.Sprite):
     containers: tuple[pygame.sprite.Group, ...]
 
     def __init__(self, left_top: tuple[int, int], width_height: tuple[int, int], text_inside: str, function: Callable):
@@ -37,7 +38,16 @@ def create_num_players_buttons(window_width: int, window_height: int):
     button_width, button_height, button_height_separation = 80, 50, 80
     left = round((window_width - button_width)/2)
     top = round((window_height - (3 * button_height_separation + button_height))/2)
-    Button((left, top), (button_width, button_height), "2 players", lambda: 2)
-    Button((left, top + button_height_separation), (button_width, button_height), "3 players", lambda: 3)
-    Button((left, top + 2*button_height_separation), (button_width, button_height), "4 players", lambda: 4)
-    Button((left, top + 3*button_height_separation), (button_width, button_height), "5 players", lambda: 5)
+    NumPlayerButton((left, top), (button_width, button_height), "2 players", lambda: 2)
+    NumPlayerButton((left, top + button_height_separation), (button_width, button_height), "3 players", lambda: 3)
+    NumPlayerButton((left, top + 2*button_height_separation), (button_width, button_height), "4 players", lambda: 4)
+    NumPlayerButton((left, top + 3*button_height_separation), (button_width, button_height), "5 players", lambda: 5)
+
+
+class CardButton(pygame.sprite.Sprite):
+    def __init__(self):
+        self.position: tuple[int, int] = (0,0)
+        self.image: pygame.Surface
+    
+    def draw_card(self, screen: pygame.Surface):
+        screen.blit(self.image, self.position)

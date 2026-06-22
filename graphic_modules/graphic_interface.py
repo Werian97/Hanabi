@@ -2,8 +2,8 @@ import pygame
 
 from pygame import Surface
 from graphic_modules.graphic_settings import FULL_SCREEN, WINDOW_HEIGHT, WINDOW_WIDTH
-from graphic_modules.buttons import Button, create_num_players_buttons
-from graphic_modules.screen_geometry import ScreenGeometry
+from graphic_modules.buttons import NumPlayerButton, create_num_players_buttons
+from graphic_modules.geometry import Geometry
 
 from game_engine_modules.game import Game
 from game_engine_modules.move import Move
@@ -19,7 +19,7 @@ def get_number_of_players(**kwargs) -> tuple[int, bool]:
     players_number: int
 
     buttons = pygame.sprite.Group()
-    Button.containers = (buttons,)
+    NumPlayerButton.containers = (buttons,)
 
     if full_screen:
         sizes = pygame.display.get_desktop_sizes()
@@ -61,15 +61,44 @@ def get_number_of_players(**kwargs) -> tuple[int, bool]:
     pygame.display.quit()
     return players_number, exit_game
 
-def start_game(players_number) -> ScreenGeometry:
+def start_window(players_number, game: Game, **kwargs) -> Geometry:
     pygame.init()
-    if FULL_SCREEN:
+    full_screen = kwargs.get("full_screen", FULL_SCREEN)
+    if full_screen:
         size = pygame.display.get_desktop_sizes()[0]
     else:
         size = (WINDOW_WIDTH, WINDOW_HEIGHT)
     screen = pygame.display.set_mode(size)
+    geometry = Geometry(players_number, screen)
+    for card in game.all_cards:
+        card.button.image = pygame.transform.scale(pygame.image.load(f'assets/cards/{card.suit}{card.rank}.png'), geometry.card_size)
+    for card in game.stacks:
+        if card.rank == 0:
+            card.button.image = pygame.transform.scale(pygame.image.load(f'assets/cards/{card.suit}{card.rank}.png'), geometry.card_size)
     pygame.display.set_caption("Hanabi E.-Version")
-    return ScreenGeometry(players_number, screen)
+    return geometry
 
-def ask_move(screen: Surface, game: Game, history: History) -> Move:
-    pass
+def ask_move(geometry: Geometry, game: Game, history: History, **kwargs) -> Move:
+    full_screen = kwargs.get("full_screen", FULL_SCREEN)
+    clock = pygame.time.Clock()
+    while game.running:
+        for event in pygame.event.get(): #if you remove this loop the window will freeze because the event queue fills in and no one clear it
+            if event.type == pygame.QUIT:
+                pygame.display.quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.display.quit()
+                    full_screen = not full_screen
+                    geometry = start_window(len(game.players), game, full_screen = full_screen)
+        geometry.screen.fill("darkgreen")
+        for i in range(len(game.players)):
+            player = game.players[i]
+            for j in range(len(player.hand)):
+                card = player.hand[j]
+                card.button.position = (geometry.hands_coos[i][0] + j*(geometry.card_size[0]+geometry.card_spacing), geometry.hands_coos[i][1])
+                card.button.draw_card(geometry.screen)
+        pygame.display.flip()
+
+        clock.tick(60)
+    return Move()
+
