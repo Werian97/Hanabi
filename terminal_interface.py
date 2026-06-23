@@ -45,7 +45,6 @@ def print_game_state(game: Game) -> None:
     print(f"You have {game.clues} clues")
     print("\n")
     print(f"And this is the trash:\n{game.trash}")
-    input("Press enter to continue...")
 
 def get_valid_clue_target(game: Game) -> Player:
     names: list[str] = get_name_list(game.current.others)

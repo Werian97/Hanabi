@@ -24,8 +24,12 @@ class TwoPlayers(Enum):
     NAME_LABEL_COOS = [(691, 135), (691, 308)]
     TRASH_CARD_SIZE = (85, 119)
     TRASH_COOS = [(1066, 185), (1066, 323), (1066, 461), (1066, 599), (1066, 737)]
+    TRASH_BOX_COO = (1051, 170)
+    TRASH_BOX_SIZE = (512, 691)
     DECK_COOS = (214, 632)
     STACKS_COO = (14, 373)
+    STACKS_BOX_COO = (0, 358)
+    STACKS_BOX_SIZE = (514, 149)
     META_DATA_SIZE = (170, 119)
     META_DATA_COO = (1195, 27)
 
@@ -39,8 +43,12 @@ class ThreePlayers(Enum):
     NAME_LABEL_COOS = [(691, 135), (691, 308), (691, 481)]
     TRASH_CARD_SIZE = (85, 119)
     TRASH_COOS = [(1066, 185), (1066, 323), (1066, 461), (1066, 599), (1066, 737)]
+    TRASH_BOX_COO = (1051, 170)
+    TRASH_BOX_SIZE = (512, 691)
     DECK_COOS = (214, 632)
     STACKS_COO = (14, 373)
+    STACKS_BOX_COO = (0, 358)
+    STACKS_BOX_SIZE = (514, 149)
     META_DATA_SIZE = (170, 119)
     META_DATA_COO = (1195, 27)
 
@@ -53,8 +61,12 @@ class FourPlayers(Enum):
     NAME_LABEL_COOS = [(691, 135), (691, 308), (691, 481), (691, 654)]
     TRASH_CARD_SIZE = (85, 119)
     TRASH_COOS = [(1066, 185), (1066, 323), (1066, 461), (1066, 599), (1066, 737)]
+    TRASH_BOX_COO = (1051, 170)
+    TRASH_BOX_SIZE = (512, 691)
     DECK_COOS = (214, 632)
     STACKS_COO = (14, 373)
+    STACKS_BOX_COO = (0, 358)
+    STACKS_BOX_SIZE = (514, 149)
     META_DATA_SIZE = (170, 119)
     META_DATA_COO = (1195, 27)
 
@@ -67,7 +79,11 @@ class FivePlayers(Enum):
     NAME_LABEL_COOS = [(691, 135), (691, 308), (691, 481), (691, 654), (691, 827)]
     TRASH_CARD_SIZE = (85, 119)
     TRASH_COOS = [(1066, 185), (1066, 323), (1066, 461), (1066, 599), (1066, 737)]
+    TRASH_BOX_COO = (1051, 170)
+    TRASH_BOX_SIZE = (512, 691)
     DECK_COOS = (214, 632)
     STACKS_COO = (14, 373)
+    STACKS_BOX_COO = (0, 358)
+    STACKS_BOX_SIZE = (514, 149)
     META_DATA_SIZE = (170, 119)
     META_DATA_COO = (1195, 27)

@@ -1,6 +1,5 @@
 import pygame
 
-from graphic_modules.graphic_settings import CARD_WIDTH, CARD_HEIGHT
 from graphic_modules.geometry import center_rectangles
 
 from collections.abc import Callable
@@ -45,9 +44,17 @@ def create_num_players_buttons(window_width: int, window_height: int):
 
 
 class CardButton(pygame.sprite.Sprite):
-    def __init__(self):
-        self.position: tuple[int, int] = (0,0)
-        self.image: pygame.Surface
+    def __init__(self) -> None:
+        self.position: tuple[int, int]
+        self.rect: pygame.Rect
+        self.front_image: pygame.Surface
+        self.back_image: pygame.Surface = pygame.image.load("assets/cards/back.png")
+        self.is_pressed: bool = False
     
-    def draw_card(self, screen: pygame.Surface):
-        screen.blit(self.image, self.position)
+    def draw_card(self, screen: pygame.Surface) -> None:
+        screen.blit(self.front_image, self.position)
+    
+    def update_position(self, movement: tuple[int, int]) -> None:
+        new_x_position = self.position[0] + movement[0]
+        new_y_position = self.position[1] + movement[1]
+        self.position = (new_x_position, new_y_position)

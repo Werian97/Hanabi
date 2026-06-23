@@ -17,9 +17,9 @@ def main():
     game.deal_cards()
 
     while game.running:
-        graphic_interface.ask_move(geometry, game, history)
-        terminal_interface.print_player_hand(game.current.player, game.current.others)
-        move: Move = terminal_interface.ask_move(game, history)
+        move: Move = graphic_interface.ask_move(geometry, game, history)
+        #terminal_interface.print_player_hand(game.current.player, game.current.others)
+        #move: Move = terminal_interface.ask_move(game, history)
         move.execute(game)
                 
         game.update_exit_conditions()

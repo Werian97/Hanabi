@@ -30,9 +30,15 @@ class Geometry():
 
         self.trash_card_size = rescaled(PlayersNumber.TRASH_CARD_SIZE.value, self.window_size)
         self.trash_coos: list[coordinate] = list(map(lambda x: rescaled(x, self.window_size), PlayersNumber.TRASH_COOS.value))
+        self.trash_box_coo: coordinate = rescaled(PlayersNumber.TRASH_BOX_COO.value, self.window_size)
+        self.trash_box_size: taglia = rescaled(PlayersNumber.TRASH_BOX_SIZE.value, self.window_size)
 
         self.deck_coo: coordinate = rescaled(PlayersNumber.DECK_COOS.value, self.window_size)
+
         self.stacks_coo: coordinate = rescaled(PlayersNumber.STACKS_COO.value, self.window_size)
+        self.stacks_box_coo: coordinate = rescaled(PlayersNumber.STACKS_BOX_COO.value, self.window_size)
+        self.stacks_box_size: taglia = rescaled(PlayersNumber.STACKS_BOX_SIZE.value, self.window_size)
+        
         self.meta_data_size: taglia = rescaled(PlayersNumber.META_DATA_SIZE.value, self.window_size) #turn, efficiency, pace, clues
         self.meta_data_coo: coordinate = rescaled(PlayersNumber.META_DATA_COO.value, self.window_size)        
 
