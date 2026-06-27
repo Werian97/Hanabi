@@ -1,6 +1,8 @@
 import pygame
+from pygame.math import Vector2 as Vect
 
 from graphic_modules.geometry import center_rectangles
+from graphic_modules.graphic_settings import DEFAULT_FONT
 
 from collections.abc import Callable
 
@@ -18,7 +20,7 @@ class NumPlayerButton(pygame.sprite.Sprite):
         self.button_mouse_is_over_color = "lightgray"
         self.text_color = "black"        
         self.text_inside = text_inside
-        self.font_object = pygame.font.SysFont(name = 'calibri', size = 20)
+        self.font_object = pygame.font.SysFont(name = DEFAULT_FONT, size = 20)
         self.function: Callable = function
 
 
@@ -30,7 +32,7 @@ class NumPlayerButton(pygame.sprite.Sprite):
         pygame.draw.rect(screen, color, self.rect)
         pygame.draw.rect(screen, "black", self.rect, 2)
         rendered_text: pygame.Surface = self.font_object.render(self.text_inside, True, self.text_color)
-        delta_x, delta_y = center_rectangles(*rendered_text.get_size(), *self.rect.size)
+        delta_x, delta_y = center_rectangles(Vect(rendered_text.get_size()), Vect(self.rect.size))
         screen.blit(rendered_text, (self.rect.left + delta_x, self.rect.top + delta_y))
 
 def create_num_players_buttons(window_width: int, window_height: int):
@@ -45,7 +47,7 @@ def create_num_players_buttons(window_width: int, window_height: int):
 
 class CardButton(pygame.sprite.Sprite):
     def __init__(self) -> None:
-        self.position: tuple[int, int]
+        self.position: Vect
         self.rect: pygame.Rect
         self.front_image: pygame.Surface
         self.back_image: pygame.Surface = pygame.image.load("assets/cards/back.png")
@@ -57,4 +59,58 @@ class CardButton(pygame.sprite.Sprite):
     def update_position(self, movement: tuple[int, int]) -> None:
         new_x_position = self.position[0] + movement[0]
         new_y_position = self.position[1] + movement[1]
-        self.position = (new_x_position, new_y_position)
+        self.position = Vect(new_x_position, new_y_position)
+
+class ClueButton():
+    def __init__(self, position: Vect, screen: pygame.Surface):
+        self.position: Vect = position
+        self.size: tuple[int, int] = (40, 40)
+        self.rect: pygame.Rect = pygame.Rect(self.position, self.size)
+        self.screen: pygame.Surface = screen
+        self.rect: pygame.Rect = pygame.Rect(self.position, self.size)
+        self.is_clicked = False
+    
+    def update_border_color(self):
+        if self.is_clicked:
+            pygame.draw.rect(self.screen, "black", self.rect, 2)
+        else:
+            pygame.draw.rect(self.screen, "white", self.rect, 2)
+
+
+class ClueSuitButton(ClueButton):
+    def __init__(self, position: Vect, suit: str, screen: pygame.Surface):
+        super().__init__(position, screen)
+        self.suit = suit
+        pygame.draw.rect(self.screen, self.suit, self.rect)
+        pygame.draw.rect(self.screen, "white", self.rect, 2)
+        pygame.display.flip()
+
+class ClueRankButton(ClueButton):
+    def __init__(self, position: Vect, rank: str, screen: pygame.Surface):
+        super().__init__(position, screen)
+        self.rank = rank
+        pygame.draw.rect(self.screen, "white", self.rect)
+        font_obj = pygame.font.SysFont(DEFAULT_FONT, 40)
+        self.image: pygame.Surface = font_obj.render(self.rank, True, 'black', 'white')
+        delta_x, delta_y = center_rectangles(Vect(self.image.get_rect().size), Vect(self.rect.size))
+        text_position = (self.position[0] + delta_x, self.position[1] + delta_y)
+        screen.blit(self.image, text_position)
+        pygame.display.flip()
+
+def create_clue_buttons(screen: pygame.Surface) -> list:
+    buttons = []
+
+    buttons.append(ClueSuitButton(Vect(20, 80), "red", screen))
+    buttons.append(ClueSuitButton(Vect(80, 80), "yellow", screen))
+    buttons.append(ClueSuitButton(Vect(140, 80), "green", screen))
+    buttons.append(ClueSuitButton(Vect(200, 80), "blue", screen))
+    buttons.append(ClueSuitButton(Vect(260, 80), "purple", screen))
+
+    buttons.append(ClueRankButton(Vect(20, 140), "1", screen))
+    buttons.append(ClueRankButton(Vect(80, 140), "2", screen))
+    buttons.append(ClueRankButton(Vect(140, 140), "3", screen))
+    buttons.append(ClueRankButton(Vect(200, 140), "4", screen))
+    buttons.append(ClueRankButton(Vect(260, 140), "5", screen))
+
+    return buttons
+        

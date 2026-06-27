@@ -6,20 +6,22 @@ from game_engine_modules.game import Game
 from graphic_modules.geometry import Geometry
 
 import pygame
+from pygame.math import Vector2 as Vect
 
 coordinate = tuple[int, int]
 
 def update_card_positions(game: Game, geometry: Geometry) -> None:
-     for i in range(len(game.players)):
+    horizontal_spacing = Vect(geometry.card_size[0]+geometry.card_spacing, 0)
+    for i in range(len(game.players)):
         player: Player = game.players[i]
         for j in range(len(player.hand)):
             card: Card = player.hand[j]
-            card.button.position = (geometry.hands_coos[i][0] + j*(geometry.card_size[0]+geometry.card_spacing), geometry.hands_coos[i][1])
+            card.button.position = geometry.hands_coos[i] + j* horizontal_spacing
             card.button.rect = pygame.Rect(card.button.position, geometry.card_size)
 
-        for j in range(5):
-            card: Card = game.stacks[j]
-            card.button.position = (geometry.stacks_coo[0] + j*(geometry.card_size[0]+geometry.card_spacing), geometry.stacks_coo[1])
+    for i in range(5):
+        card = game.stacks[i]
+        card.button.position = geometry.stacks_coo + i*horizontal_spacing
 
 def drag_card(game: Game) -> None:
     mouse_is_busy = False
