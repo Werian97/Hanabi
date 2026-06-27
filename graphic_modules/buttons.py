@@ -1,7 +1,7 @@
 import pygame
 from pygame.math import Vector2 as Vect
 
-from graphic_modules.geometry import center_rectangles
+from graphic_modules.geometry import Geometry, center_rectangles
 from graphic_modules.graphic_settings import DEFAULT_FONT
 
 from collections.abc import Callable
@@ -113,4 +113,10 @@ def create_clue_buttons(screen: pygame.Surface) -> list:
     buttons.append(ClueRankButton(Vect(260, 140), "5", screen))
 
     return buttons
-        
+
+class NameLabelButton():
+    def __init__(self, name: str, geometry: Geometry, player_index: int):
+        self.name: str = name
+        self.player_index: int = player_index
+        self.text: pygame.Surface = pygame.font.SysFont(DEFAULT_FONT, 30).render(self.name, True, "black")
+        self.rect: pygame.Rect = pygame.Rect(geometry.name_label_coos[player_index], geometry.name_label_size)

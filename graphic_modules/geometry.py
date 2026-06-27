@@ -23,9 +23,9 @@ class Geometry():
             case 5:
                 PlayersNumber = FivePlayers
 
-        self.card_size: taglia = rescaled(Vect(CARD_WIDTH, CARD_HEIGHT), self.window_size)
-        self.card_spacing, _ = rescaled(Vect(CARD_SPACING, 0), self.window_size)
-        self.name_label_size: taglia = rescaled(Vect(NAME_LABEL_WIDTH, NAME_LABEL_HEIGHT), self.window_size)
+        self.card_size: taglia = rescaled(PlayersNumber.CARD_SIZE.value, self.window_size)
+        self.card_spacing, _ = rescaled(Vect(PlayersNumber.CARD_SPACING.value, 0), self.window_size)
+        self.name_label_size: taglia = rescaled(PlayersNumber.NAME_LABEL_SIZE.value, self.window_size)
         self.hands_coos: list[coordinate] = list(map(lambda x: rescaled(x, self.window_size), PlayersNumber.HANDS_COOS.value))
         self.name_label_coos: list[coordinate] = list(map(lambda x: rescaled(x, self.window_size), PlayersNumber.NAME_LABEL_COOS.value))
 

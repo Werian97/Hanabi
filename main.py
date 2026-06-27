@@ -5,7 +5,7 @@ from memory_modules.history import History
 
 import terminal_interface
 import graphic_modules.graphic_interface as graphic_interface
-from graphic_modules.updating_functions import update_trash_positions
+from graphic_modules.updating_functions import update_trash_positions, set_up_match
 
 def main():
     players_number, exit_game = graphic_interface.get_number_of_players()
@@ -15,13 +15,13 @@ def main():
     game = Game(players_number)
     geometry = graphic_interface.start_window(players_number, game)
     history = History(players_number, game.deck)
-    game.deal_cards()
+    set_up_match(game, geometry)
 
     while game.running:
         move: Move = graphic_interface.ask_move(geometry, game, history)
         move.execute(game)
         if isinstance(move, Discard):
-            update_trash_positions(geometry, game)
+            update_trash_positions(game, geometry)
         game.update_exit_conditions()
         game.next_turn()
         terminal_interface.print_game_state(game)

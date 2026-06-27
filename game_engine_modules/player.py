@@ -1,10 +1,13 @@
 from game_engine_modules.deck import Deck
 from game_engine_modules.constants import RANKS
 
+from graphic_modules.buttons import NameLabelButton
+
 class Player():
     def __init__(self, name: str):
         self.hand: Deck = []
         self.name = name
+        self.label_button: NameLabelButton
     
     def draw_a_card(self, deck: Deck) -> None:
         if deck == []:

@@ -48,7 +48,7 @@ class Game():
         if len(self.deck) == 0:
             self.clock += 1
         self.exit_conditions.striked = self.strikes >= 3
-        self.exit_conditions.win = all(card.rank == 5 for card in self.stacks)
+        self.exit_conditions.win = all(card.rank == "5" for card in self.stacks)
         self.exit_conditions.end = self.clock >= self.players_number
     
     def next_turn(self) -> None:

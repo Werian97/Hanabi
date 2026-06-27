@@ -2,10 +2,14 @@ import pygame
 import sys
 
 from pygame import Surface
+
 from graphic_modules.graphic_settings import FULL_SCREEN, WINDOW_HEIGHT, WINDOW_WIDTH, DEFAULT_FONT
-from graphic_modules.buttons import ClueButton, ClueRankButton, ClueSuitButton, NumPlayerButton, create_num_players_buttons, create_clue_buttons
+
+from graphic_modules.buttons import ClueButton, ClueRankButton, ClueSuitButton, NumPlayerButton, NameLabelButton
 from graphic_modules.geometry import Geometry
-from graphic_modules.updating_functions import drag_card, update_card_positions, update_trash_positions
+
+from graphic_modules.buttons import create_num_players_buttons, create_clue_buttons
+from graphic_modules.updating_functions import drag_card, update_card_positions, update_trash_positions, update_namelabel_positions, print_game
 
 from game_engine_modules.game import Game
 from game_engine_modules.move import Move, Play, Discard, Clue
@@ -104,13 +108,12 @@ def ask_move(geometry: Geometry, game: Game, history: History, **kwargs) -> Move
                     geometry = start_window(len(game.players), game, full_screen = full_screen)
                     card_positions_updated = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                for i in range(game.players_number):
-                    if game.players[i].name != game.current.player.name:
-                        if pygame.Rect(geometry.name_label_coos[i], geometry.name_label_size).collidepoint(pygame.mouse.get_pos()):
-                            if game.clues > 0:
-                                trying_to_give_clue = [True, i]
-                            else:
-                                need_to_warn = True
+                for player in game.current.others:
+                    if player.label_button.rect.collidepoint(pygame.mouse.get_pos()):
+                        if game.clues > 0:
+                            trying_to_give_clue = [True, player.label_button.player_index]
+                        else:
+                            need_to_warn = True
             elif event.type == pygame.MOUSEBUTTONUP:
                 for i in range(len(game.current.player.hand)):
                     card = game.current.player.hand[i]
@@ -123,11 +126,11 @@ def ask_move(geometry: Geometry, game: Game, history: History, **kwargs) -> Move
                             move = Discard(game.current.player.hand.index(card) +1)
                 if trying_to_give_clue[0]:
                     i = trying_to_give_clue[1]
-                    if pygame.Rect(geometry.name_label_coos[i], geometry.name_label_size).collidepoint(pygame.mouse.get_pos()):
-                        answered, move = what_clue(geometry, game.players[i])
+                    player: Player = game.players[i]
+                    if player.label_button.rect.collidepoint(pygame.mouse.get_pos()):
+                        answered, move = what_clue(geometry, player)
                 card_positions_updated = False
 
-        
         mouse_button_one = pygame.mouse.get_pressed(num_buttons=3)[0]
         if mouse_button_one:
             drag_card(game)
@@ -136,7 +139,8 @@ def ask_move(geometry: Geometry, game: Game, history: History, **kwargs) -> Move
                 card.button.is_pressed = False
         if not card_positions_updated:
             update_card_positions(game, geometry)
-            update_trash_positions(geometry, game)
+            update_trash_positions(game, geometry)
+            update_namelabel_positions(game, geometry)
             card_positions_updated = True
         geometry.screen.fill("darkgreen")
         if need_to_warn:
@@ -152,38 +156,7 @@ def ask_move(geometry: Geometry, game: Game, history: History, **kwargs) -> Move
 
 
 
-
-
-
-
-
-
 ##########################  AUXILLARY FUNCTIONS  ###########################
-
-def print_game(game: Game, geometry: Geometry) -> None:
-    for player in game.current.others:#stampa le mani degli altri giocatori
-        for card in player.hand:
-            card.button.draw_card(geometry.screen)
-    
-    for i in range(5):
-        card: Card = game.stacks[i]
-        card.button.draw_card(geometry.screen)
-    
-    for i in range(5):
-        for card in game.trash[i]:
-            card.button.draw_card(geometry.screen)
-    
-    
-    random_card = game.current.player.hand[0]
-    geometry.screen.blit(random_card.button.back_image, geometry.deck_coo)
-    remaining_cards = pygame.font.SysFont(name = DEFAULT_FONT, size = 55)
-    geometry.screen.blit(remaining_cards.render(f"{len(game.deck)}", True, "black"), geometry.deck_coo)
-
-    clues = pygame.font.SysFont(name = DEFAULT_FONT, size = 55)
-    geometry.screen.blit(clues.render(f"{game.clues}", True, "black"), geometry.meta_data_coo)
-    
-    for card in game.current.player.hand:
-        card.button.draw_card(geometry.screen)
 
 def what_clue(geometry: Geometry, target_player: Player) -> tuple[bool, Move]:
     rank_or_suit: str
