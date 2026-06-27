@@ -36,3 +36,14 @@ def drag_card(game: Game) -> None:
             if card.button.rect.collidepoint(pygame.mouse.get_pos()):
                 card.button.is_pressed = True
                 pygame.mouse.get_rel()
+
+def update_trash_positions(geometry: Geometry, game: Game) -> None:
+    horizontal_space = geometry.trash_box_size[0] - (geometry.trash_coos[0][0] - geometry.trash_box_coo[0]) - geometry.trash_card_size[0]
+    for i in range(5):
+        suit = game.trash[i]
+        n = len(suit)
+        if n > 0:
+            horizontal_step = Vect(round(horizontal_space / n), 0)
+            for j in range(n):
+                card = suit[j]
+                card.button.position = geometry.trash_coos[i] + j*horizontal_step

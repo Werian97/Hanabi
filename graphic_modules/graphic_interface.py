@@ -5,7 +5,7 @@ from pygame import Surface
 from graphic_modules.graphic_settings import FULL_SCREEN, WINDOW_HEIGHT, WINDOW_WIDTH, DEFAULT_FONT
 from graphic_modules.buttons import ClueButton, ClueRankButton, ClueSuitButton, NumPlayerButton, create_num_players_buttons, create_clue_buttons
 from graphic_modules.geometry import Geometry
-from graphic_modules.updating_functions import drag_card, update_card_positions
+from graphic_modules.updating_functions import drag_card, update_card_positions, update_trash_positions
 
 from game_engine_modules.game import Game
 from game_engine_modules.move import Move, Play, Discard, Clue
@@ -136,6 +136,7 @@ def ask_move(geometry: Geometry, game: Game, history: History, **kwargs) -> Move
                 card.button.is_pressed = False
         if not card_positions_updated:
             update_card_positions(game, geometry)
+            update_trash_positions(geometry, game)
             card_positions_updated = True
         geometry.screen.fill("darkgreen")
         if need_to_warn:
