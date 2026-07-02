@@ -1,3 +1,5 @@
+from math import floor
+
 from game_engine_modules.player import Player
 from game_engine_modules.card import Card
 from game_engine_modules.deck import Deck
@@ -22,7 +24,6 @@ class Game():
         self.turn: int = 1 #number of turns
         self.deck: Deck = get_new_deck() #shuffled deck
         self.all_cards: Deck = self.deck.copy()
-        self.clues: int = INITIAL_CLUES #initial clue tokens (8)
         self.strikes: int = 0 #strikes
         self.clock: int = 0 #it ticks the last round of the game
         self.stacks: Deck =[ #initialized stacks
@@ -36,7 +37,11 @@ class Game():
         self.players: list[Player] = [] #empty list of players. populated by the next for-cycle
         self.current: PlayerAndOthers
         self.exit_conditions: ExitConditions = ExitConditions() #[stack_completed, strike_exceeded, clock's_over]
-        self.final_score: int = 0
+        self.score: int = 0
+        self.clues: int = INITIAL_CLUES #initial clue tokens (8)
+        self.pace: int = self.calculate_pace()
+        self.starting_pace: int = self.pace
+        self.efficiency: float = self.calculate_efficiency()
 
     def update_others_than(self, player: Player) -> None:
         self.current.others = []
@@ -54,11 +59,15 @@ class Game():
     def next_turn(self) -> None:
         if self.exit_conditions.win or self.exit_conditions.striked or self.exit_conditions.end:
             self.running = False
-            if not self.exit_conditions.end:
-                self.final_score = calculate_points(self.stacks)
+            if self.exit_conditions.striked:
+                self.score = 0
+                return
         else:
             self.next_player()
             self.turn += 1
+            self.pace = self.calculate_pace()
+            self.efficiency = self.calculate_efficiency()
+        self.score = calculate_points(self.stacks)
     
     def next_player(self) -> None:
         j = self.players.index(self.current.player)
@@ -74,6 +83,18 @@ class Game():
             for _ in range(0, self.hand_capacity):
                 self.players[i].draw_a_card(self.deck)
         self.current: PlayerAndOthers = PlayerAndOthers(self.players[0], self.players[1:]) #it store in each turn who's playing and who's watching
+
+    def calculate_pace(self) -> int:
+        #must correct
+        return 50 - ((self.hand_capacity - 1) * self.players_number) - (5 * len(self.stacks))
+
+    def calculate_efficiency(self) -> float:
+        if self.players_number == 5:
+            unusable_clues = 2
+        else:
+            unusable_clues = 1
+        return round((5 * len(self.stacks)) / (8 + self.starting_pace + len(self.stacks) - unusable_clues), 2)
+    
 
 class PlayerAndOthers():
     def __init__(self, player: Player, others: list[Player]):

@@ -2,29 +2,34 @@ import pygame
 import sys
 
 from pygame import Surface
+from pygame.math import Vector2 as Vect
 
-from graphic_modules.graphic_settings import FULL_SCREEN, WINDOW_HEIGHT, WINDOW_WIDTH, DEFAULT_FONT
+from graphic_modules.graphic_settings import FULL_SCREEN, WINDOW_HEIGHT, WINDOW_WIDTH
 
-from graphic_modules.buttons import ClueButton, ClueRankButton, ClueSuitButton, NumPlayerButton, NameLabelButton
+from graphic_modules.buttons import NumPlayerButton
 from graphic_modules.geometry import Geometry
+from graphic_modules.archive import Archive
+from graphic_modules.painter import Painter
 
-from graphic_modules.buttons import create_num_players_buttons, create_clue_buttons
-from graphic_modules.updating_functions import drag_card, update_card_positions, update_trash_positions, update_namelabel_positions, print_game
+from graphic_modules.buttons import create_num_players_buttons
+from graphic_modules.updating_functions import drag_card, update_card_positions
 
 from game_engine_modules.game import Game
-from game_engine_modules.move import Move, Play, Discard, Clue
-from game_engine_modules.player import Player
-from game_engine_modules.card import Card
+from game_engine_modules.move import Move
 
+from graphic_modules.watcher import Watcher
 from memory_modules.history import History
 
-def get_number_of_players(**kwargs) -> tuple[int, bool]:
+Geometries = tuple[Geometry, Geometry]
+Archives = tuple[Archive, Archive]
+taglia = Vect
+coordinate = Vect
+
+def get_number_of_players(**kwargs) -> int | None:
     full_screen: bool = kwargs.get("full_screen", FULL_SCREEN)
     pygame.init()
 
-    number_gotten = False
-    exit_game = False
-    players_number: int
+    players_number: int | None = None
 
     buttons = pygame.sprite.Group()
     NumPlayerButton.containers = (buttons,)
@@ -43,12 +48,12 @@ def get_number_of_players(**kwargs) -> tuple[int, bool]:
 
     clock = pygame.time.Clock()
 
-    while not (number_gotten or exit_game):
+    while players_number == None:
         screen.fill("darkgreen")
         for event in pygame.event.get(): #if you remove this loop the window will freeze because the event qeue fills in and no one clear it
             if event.type == pygame.QUIT:
                 pygame.display.quit()
-                return 0, True  #exit the function. return False => in the main module the program exit
+                return None
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.display.quit()
@@ -57,7 +62,6 @@ def get_number_of_players(**kwargs) -> tuple[int, bool]:
                 for button in buttons:
                     if button.rect.collidepoint(pygame.mouse.get_pos()):
                         players_number = button.function()
-                        number_gotten = True
         
         for button in buttons:
             button.draw_button(screen)
@@ -67,145 +71,68 @@ def get_number_of_players(**kwargs) -> tuple[int, bool]:
         clock.tick(60) #end of loop. restart
 
     pygame.display.quit()
-    return players_number, exit_game
+    return players_number
 
-def start_window(players_number, game: Game, **kwargs) -> Geometry:
+def start_window(**kwargs) -> Painter:
     pygame.init()
-    full_screen = kwargs.get("full_screen", FULL_SCREEN)
-    if full_screen:
-        size = pygame.display.get_desktop_sizes()[0]
-    else:
-        size = (WINDOW_WIDTH, WINDOW_HEIGHT)
-    screen = pygame.display.set_mode(size)
-    geometry = Geometry(players_number, screen)
-    for card in game.all_cards:
-        card.button.front_image = pygame.transform.scale(pygame.image.load(f'assets/cards/{card.suit}{card.rank}.png'), geometry.card_size)
-        card.button.back_image = pygame.transform.scale(pygame.image.load(f'assets/cards/back.png'), geometry.card_size)
-    for card in game.stacks:
-        if card.rank == "0":
-            card.button.front_image = pygame.transform.scale(pygame.image.load(f'assets/cards/{card.suit}{card.rank}.png'), geometry.card_size)
-    pygame.display.set_caption("Hanabi E.-Version")
-    return geometry
+    players_number: int = kwargs.get("players_number") # type: ignore
+    
+    full_screen_size: taglia = Vect(pygame.display.get_desktop_sizes()[0])
+    window_size: taglia = Vect(WINDOW_WIDTH, WINDOW_HEIGHT)
 
-def ask_move(geometry: Geometry, game: Game, history: History, **kwargs) -> Move:
-    card_positions_updated: bool = False
-    trying_to_give_clue: list = [False, -1]
-    need_to_warn = False
-    warning_message = pygame.font.SysFont(DEFAULT_FONT, 40)
-    full_screen: bool = kwargs.get("full_screen", FULL_SCREEN)
+    FS_geometry: Geometry = Geometry(players_number, full_screen_size)
+    FS_archive: Archive = Archive(FS_geometry)
+
+    WND_geometry: Geometry = Geometry(players_number, Vect(WINDOW_WIDTH, WINDOW_HEIGHT))
+    WND_archive: Archive = Archive(WND_geometry)
+
+    geometries = (WND_geometry, FS_geometry)
+    archives = (WND_archive, FS_archive)
+
+    full_screen: bool = FULL_SCREEN
+    if full_screen:
+        screen: Surface = pygame.display.set_mode(full_screen_size)
+        painter = Painter(screen, geometries, archives)
+    else:
+        screen: Surface = pygame.display.set_mode(window_size)
+        painter = Painter(screen, geometries, archives)
+    pygame.display.set_caption("Hanabi E.-Version")
+    return painter
+
+def ask_move(painter: Painter, game: Game, history: History) -> Move:
+    watcher = Watcher()
     clock = pygame.time.Clock()
-    answered = False
-    move: Move
-    while not answered:
+    move: Move | None = None
+    while move == None:
         for event in pygame.event.get(): #if you remove this loop the window will freeze because the event queue fills in and no one clear it
             if event.type == pygame.QUIT:
                 pygame.display.quit()
                 sys.exit(1)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.display.quit()
-                    full_screen = not full_screen
-                    geometry = start_window(len(game.players), game, full_screen = full_screen)
-                    card_positions_updated = False
+                    painter.switch_FS_WND()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                for player in game.current.others:
-                    if player.label_button.rect.collidepoint(pygame.mouse.get_pos()):
-                        if game.clues > 0:
-                            trying_to_give_clue = [True, player.label_button.player_index]
-                        else:
-                            need_to_warn = True
+                watcher.check_name_labels(game, painter.current_geometry)
+                watcher.check_cards_to_drag(game)
             elif event.type == pygame.MOUSEBUTTONUP:
-                for i in range(len(game.current.player.hand)):
-                    card = game.current.player.hand[i]
-                    if pygame.Rect(geometry.stacks_box_coo, geometry.stacks_box_size).collidepoint(card.button.rect.center):
-                        answered = True
-                        move = Play(i + 1)
-                    elif pygame.Rect(geometry.trash_box_coo, geometry.trash_box_size).collidepoint(card.button.rect.center):
-                        if game.clues < 8:
-                            answered = True
-                            move = Discard(game.current.player.hand.index(card) +1)
-                if trying_to_give_clue[0]:
-                    i = trying_to_give_clue[1]
-                    player: Player = game.players[i]
-                    if player.label_button.rect.collidepoint(pygame.mouse.get_pos()):
-                        answered, move = what_clue(geometry, player)
-                card_positions_updated = False
+                move: Move | None = watcher.check_move_inputs(game, painter)
+                painter.card_positions_updated = False
+                if move != None:
+                    return move
 
-        mouse_button_one = pygame.mouse.get_pressed(num_buttons=3)[0]
+        mouse_button_one: bool = pygame.mouse.get_pressed(num_buttons=3)[0]
         if mouse_button_one:
-            drag_card(game)
-        else:
-            for card in game.current.player.hand:
-                card.button.is_pressed = False
-        if not card_positions_updated:
-            update_card_positions(game, geometry)
-            update_trash_positions(game, geometry)
-            update_namelabel_positions(game, geometry)
-            card_positions_updated = True
-        geometry.screen.fill("darkgreen")
-        if need_to_warn:
-            geometry.screen.blit(warning_message.render("No clue token left", True, "black"), geometry.warning_message_coo)
-        print_game(game, geometry)
-        pygame.display.flip()
+            drag_card(game, watcher)
+        
+        if not painter.card_positions_updated:
+            update_card_positions(game, painter.current_geometry)
+            painter.card_positions_updated = True
+            watcher.need_redraw = True
+        if watcher.clue_token_need_warn:
+            painter.display_warning_message(painter.clue_token_warning_message)
+        if watcher.need_redraw:
+            painter.draw_game(game)
+            watcher.need_redraw = False
 
         clock.tick(60)
     history.add_move(move)
-    return move
-
-
-
-
-
-##########################  AUXILLARY FUNCTIONS  ###########################
-
-def what_clue(geometry: Geometry, target_player: Player) -> tuple[bool, Move]:
-    rank_or_suit: str
-    possible_clues = target_player.get_possible_clues()
-    pygame.draw.rect(geometry.screen, "gray", pygame.Rect(geometry.clue_window_coo, geometry.clue_window_size))
-    clue_buttons: list[ClueButton] = create_clue_buttons(geometry.screen)
-
-    x_on_exit_button = pygame.font.SysFont(DEFAULT_FONT, 40)
-    geometry.screen.blit(x_on_exit_button.render("X", True, "black"), geometry.text_on_x_button_coo)
-    exit_button = pygame.Rect(geometry.x_button_coo, geometry.x_button_size)
-
-    text_on_giveclue_button = pygame.font.SysFont(DEFAULT_FONT, 30)
-    geometry.screen.blit(text_on_giveclue_button.render("give clue", True, "black"), geometry.text_on_giveclue_button_coo)
-    giveclue_button = pygame.Rect(geometry.giveclue_button_coo, geometry.giveclue_button_size)
-
-    clue_given = False
-    clock = pygame.time.Clock()
-    while not clue_given:
-        for event in pygame.event.get():
-            if pygame.mouse.get_pressed()[0]:
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = pygame.mouse.get_pos()
-                    for button in clue_buttons:
-                        if button.rect.collidepoint(mouse_pos):
-                            for other in clue_buttons:
-                                other.is_clicked = False
-                                other.update_border_color()
-                            button.is_clicked = True
-                            button.update_border_color()
-                    if exit_button.collidepoint(mouse_pos):
-                        return False, Move()
-                    if giveclue_button.collidepoint(mouse_pos):
-                        for button in clue_buttons:
-                            if button.is_clicked:
-                                if isinstance(button, ClueRankButton):
-                                    if button.rank in possible_clues["ranks"]:
-                                        rank_or_suit = button.rank
-                                        clue_given = True
-                                    else:
-                                        warning_message = pygame.font.SysFont(DEFAULT_FONT, 40)
-                                        geometry.screen.blit(warning_message.render("No empty clue allowed", True, "black"), geometry.warning_message_coo)
-                                elif isinstance(button, ClueSuitButton):
-                                    if button.suit in possible_clues["suits"]:
-                                        rank_or_suit = button.suit
-                                        clue_given = True
-                                    else:
-                                        warning_message = pygame.font.SysFont(DEFAULT_FONT, 40)
-                                        geometry.screen.blit(warning_message.render("No empty clue allowed", True, "black"), geometry.warning_message_coo)
-        pygame.display.flip()
-        clock.tick(60)
-    return True, Clue(target_player, rank_or_suit)
-

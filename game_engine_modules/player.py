@@ -1,13 +1,11 @@
 from game_engine_modules.deck import Deck
 from game_engine_modules.constants import RANKS
 
-from graphic_modules.buttons import NameLabelButton
-
 class Player():
     def __init__(self, name: str):
         self.hand: Deck = []
         self.name = name
-        self.label_button: NameLabelButton
+        self.index: int
     
     def draw_a_card(self, deck: Deck) -> None:
         if deck == []:
@@ -32,11 +30,13 @@ class Player():
             if clue in RANKS:
                 if card.rank == clue:
                     card.positive_rank_clues.add(clue)
+                    card.is_clued = True
                 else:
                     card.negative_rank_clues.add(clue)
             else:
                 if card.suit == clue:
                     card.positive_suit_clues.add(clue)
+                    card.is_clued = True
                 else:
                     card.negative_suit_clues.add(clue)
 

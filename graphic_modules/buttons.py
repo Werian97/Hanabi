@@ -21,7 +21,7 @@ class NumPlayerButton(pygame.sprite.Sprite):
         self.text_color = "black"        
         self.text_inside = text_inside
         self.font_object = pygame.font.SysFont(name = DEFAULT_FONT, size = 20)
-        self.function: Callable = function
+        self.function: Callable[[], int] = function
 
 
     def draw_button(self, screen: pygame.Surface) -> None:
@@ -49,17 +49,11 @@ class CardButton(pygame.sprite.Sprite):
     def __init__(self) -> None:
         self.position: Vect
         self.rect: pygame.Rect
-        self.front_image: pygame.Surface
-        self.back_image: pygame.Surface = pygame.image.load("assets/cards/back.png")
         self.is_pressed: bool = False
     
-    def draw_card(self, screen: pygame.Surface) -> None:
-        screen.blit(self.front_image, self.position)
-    
-    def update_position(self, movement: tuple[int, int]) -> None:
-        new_x_position = self.position[0] + movement[0]
-        new_y_position = self.position[1] + movement[1]
-        self.position = Vect(new_x_position, new_y_position)
+    def update_position(self, movement: Vect) -> None:
+        self.position = self.position + movement
+        self.rect.move_ip(movement)
 
 class ClueButton():
     def __init__(self, position: Vect, screen: pygame.Surface):
@@ -113,10 +107,3 @@ def create_clue_buttons(screen: pygame.Surface) -> list:
     buttons.append(ClueRankButton(Vect(260, 140), "5", screen))
 
     return buttons
-
-class NameLabelButton():
-    def __init__(self, name: str, geometry: Geometry, player_index: int):
-        self.name: str = name
-        self.player_index: int = player_index
-        self.text: pygame.Surface = pygame.font.SysFont(DEFAULT_FONT, 30).render(self.name, True, "black")
-        self.rect: pygame.Rect = pygame.Rect(geometry.name_label_coos[player_index], geometry.name_label_size)

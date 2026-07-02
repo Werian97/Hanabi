@@ -18,6 +18,7 @@ class Play(Move):
     
     def execute(self, game: Game) -> None:
         card_to_play: Card = game.current.player.hand.pop(self.slot-1)
+        card_to_play.is_clued = False
         suit_index: int = SUITS.index(card_to_play.suit)
         if game.stacks[suit_index] == card_to_play.precedent():
             game.stacks[suit_index] = card_to_play
@@ -51,6 +52,7 @@ class Discard(Move):
 
     def execute(self, game: Game):
         discarded_card = game.current.player.hand.pop(self.slot-1)
+        discarded_card.is_clued = False
         add_to_trash(game.trash, discarded_card)
         game.clues += 1
         if len(game.deck) > 0:
